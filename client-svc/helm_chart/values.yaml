@@ -1,0 +1,14 @@
+app:
+  name: kuberpc-client
+  namespace: kuberpc-dev
+  replicas: 1
+  rpcPort: 8092
+  httpPort: 8091
+  image:
+    repository: docker.io/darksueii/test_kuberpc
+    tag: latest
+    pullPolicy: Always
+
+service:
+  type: ClusterIP
+  protocol: TCP
