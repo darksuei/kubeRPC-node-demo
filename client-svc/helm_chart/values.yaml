@@ -5,10 +5,18 @@ app:
   rpcPort: 8092
   httpPort: 8091
   image:
-    repository: docker.io/darksueii/test_kuberpc
+    repository: docker.io/darksueii/test_kuberpc_client
     tag: latest
     pullPolicy: Always
 
 service:
   type: ClusterIP
   protocol: TCP
+
+secret:
+  name: kuberpc-client-secret
+  data:
+    RPC_PORT: "8092"
+    HTTP_PORT: "8091"
+    KUBERPC_CORE: "https://2b21-102-88-82-43.ngrok-free.app"
+    SERVICE_NAME: "kuberpc-server"

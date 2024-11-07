@@ -4,13 +4,13 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm ci --only=production
+RUN npm i
 
 COPY . .
 
 ENV NODE_ENV=production
 
-EXPOSE 8081
-EXPOSE 8082
+EXPOSE 8091
+EXPOSE 8092
 
 CMD ["node", "index.js"]
