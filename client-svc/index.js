@@ -5,8 +5,8 @@ import dotenv from "dotenv";
 const app = express();
 dotenv.config();
 
-const RPC_PORT = process.env.RPC_PORT || 8092;
-const HTTP_PORT = process.env.HTTP_PORT || 8091;
+const RPC_PORT = Number(process.env.RPC_PORT || 8092);
+const HTTP_PORT = Number(process.env.HTTP_PORT || 8091);
 const KUBERPC_CORE = process.env.KUBERPC_CORE;
 const SERVICE_NAME = process.env.SERVICE_NAME;
 

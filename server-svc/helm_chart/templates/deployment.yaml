@@ -20,3 +20,6 @@ spec:
           ports:
             - containerPort: {{ .Values.app.rpcPort }}
             - containerPort: {{ .Values.app.httpPort }}
+          envFrom:
+            - secretRef:
+                name: {{ .Values.secret.name }}
