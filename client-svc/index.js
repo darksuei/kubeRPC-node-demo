@@ -1,17 +1,16 @@
 import express from "express";
-import { KubeRPCClient, KubeRPCServer } from "kuberpc-sdk";
+import { KubeRPCClient } from "kuberpc-sdk";
 import dotenv from "dotenv";
 
 const app = express();
 dotenv.config();
 
-const RPC_PORT = Number(process.env.RPC_PORT || 8092);
 const HTTP_PORT = Number(process.env.HTTP_PORT || 8091);
 const KUBERPC_CORE = process.env.KUBERPC_CORE;
 const SERVICE_NAME = process.env.SERVICE_NAME;
 
 app.get("/", (req, res) => {
-  return res.send("Hello World");
+  return res.status(200).send("Hello World");
 });
 
 app.listen(HTTP_PORT, async () => {

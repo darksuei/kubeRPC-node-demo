@@ -1,0 +1,85 @@
+version: "3.8"
+services:
+  kuberpc:
+    image: darksueii/kuberpc:latest
+    restart: "always"
+    ports:
+      - "${PORT}:${PORT}"
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/health || exit 1"]
+      interval: 10s
+      retries: 10
+      start_period: 60s
+    environment:
+      KUBECONFIG_FILE: ${KUBECONFIG_FILE}
+      NAMESPACE: ${NAMESPACE}
+      PORT: ${PORT}
+      ENABLE_DEFAULT_SERVICE_DISCOVERY: ${ENABLE_DEFAULT_SERVICE_DISCOVERY}
+      EXCLUDE_SERVICES: ${EXCLUDE_SERVICES}
+      FLUSH_DATABASE: ${FLUSH_DATABASE}
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "${REDIS_PORT}:${REDIS_PORT}"
+    volumes:
+      - redis_data:/data
+    restart: always
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      retries: 5
+      start_period: 10s
+
+  server-simulator:
+    image: darksueii/kuberpc_server:latest
+    restart: "always"
+    ports:
+      - "${SERVER_HTTP_PORT}:${SERVER_HTTP_PORT}"
+    depends_on:
+      redis:
+        condition: service_healthy
+      kuberpc:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8081 || exit 1"]
+      interval: 10s
+      retries: 10
+      start_period: 60s
+    environment:
+      RPC_HOST: ${SERVER_RPC_HOST}
+      RPC_PORT: ${SERVER_RPC_PORT}
+      HTTP_PORT: ${SERVER_HTTP_PORT}
+      KUBERPC_CORE: ${KUBERPC_CORE}
+      SERVICE_NAME: ${SERVICE_NAME}
+
+  client-simulator:
+    image: darksueii/kuberpc_client:latest
+    restart: "always"
+    ports:
+      - "${CLIENT_HTTP_PORT}:${CLIENT_HTTP_PORT}"
+    depends_on:
+      redis:
+        condition: service_healthy
+      kuberpc:
+        condition: service_healthy
+      server-simulator:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8091 || exit 1"]
+      interval: 10s
+      retries: 10
+      start_period: 60s
+    environment:
+      HTTP_PORT: ${CLIENT_HTTP_PORT}
+      KUBERPC_CORE: ${KUBERPC_CORE}
+      SERVICE_NAME: ${SERVICE_NAME}
+volumes:
+  redis_data:

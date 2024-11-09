@@ -1,11 +1,12 @@
 import express from "express";
-import { KubeRPCClient, KubeRPCServer } from "kuberpc-sdk";
+import { KubeRPCServer } from "kuberpc-sdk";
 import dotenv from "dotenv";
 
 dotenv.config();
 const app = express();
 
-const RPC_HOST = process.env.RPC_HOST || "localhost";
+const RPC_HOST =
+  process.env.RPC_HOST || process.env.SERVER_RPC_HOST || "localhost";
 const RPC_PORT = Number(process.env.RPC_PORT || 8082);
 const HTTP_PORT = Number(process.env.HTTP_PORT || 8081);
 const KUBERPC_CORE = process.env.KUBERPC_CORE;
