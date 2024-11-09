@@ -23,15 +23,14 @@ app.listen(HTTP_PORT, async () => {
 async function initRPCServer() {
   const kubeRPCServer = new KubeRPCServer({
     apiBaseURL: KUBERPC_CORE,
+    host: RPC_HOST,
     port: RPC_PORT,
     serviceName: SERVICE_NAME,
   });
 
   await kubeRPCServer.initialize();
 
-  await kubeRPCServer.registerSingleMethod({
-    host: RPC_HOST,
-    port: RPC_PORT,
+  await kubeRPCServer.registerMethod({
     serviceName: SERVICE_NAME,
     method: {
       name: "test-method-01",
@@ -40,8 +39,31 @@ async function initRPCServer() {
       handler: testMethod,
     },
   });
+
+  // Unnecessary, initialize already does this
+  //  but this method can be used for updates to the service
+  await kubeRPCServer.updateService({
+    serviceName: SERVICE_NAME,
+    host: RPC_HOST,
+    port: RPC_PORT,
+  });
+
+  await kubeRPCServer.updateMethod({
+    serviceName: SERVICE_NAME,
+    methodName: "test-method-01",
+    method: {
+      name: "test-method-01-updated",
+      params: ["param_one", "param_two"],
+      description: "Testing RPC",
+      handler: testMethod,
+    },
+  });
 }
 
 function testMethod(...args) {
   return `Received: ${args.join(", ")}`;
+}
+
+function testMethodUpdated(...args) {
+  return `Received from updated method: ${args.join(", ")}`;
 }

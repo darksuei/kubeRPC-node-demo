@@ -31,10 +31,10 @@ async function initRPCClient() {
   console.log(await kubeRPCClient.getServices());
   console.log(await kubeRPCClient.getSingleService(SERVICE_NAME));
 
-  const response = await kubeRPCClient.invokeMethod({
+  const response = await kubeRPCClient.invoke({
     serviceName: SERVICE_NAME,
     method: {
-      name: "test-method-01",
+      name: "test-method-01-updated",
       params: ["param_one", "param_two"],
     },
   });
