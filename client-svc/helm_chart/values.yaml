@@ -5,7 +5,7 @@ app:
   rpcPort: 8092
   httpPort: 8091
   image:
-    repository: docker.io/darksueii/kuberpc_client
+    repository: docker.io/darksueii/kuberpc_client_simulator
     tag: latest
     pullPolicy: Always
 

@@ -5,8 +5,7 @@ import dotenv from "dotenv";
 dotenv.config();
 const app = express();
 
-const RPC_HOST =
-  process.env.RPC_HOST || process.env.SERVER_RPC_HOST || "localhost";
+const RPC_HOST = process.env.RPC_HOST || "localhost";
 const RPC_PORT = Number(process.env.RPC_PORT || 8082);
 const HTTP_PORT = Number(process.env.HTTP_PORT || 8081);
 const KUBERPC_CORE = process.env.KUBERPC_CORE;
@@ -29,9 +28,10 @@ async function initRPCServer() {
     serviceName: SERVICE_NAME,
   });
 
-  await kubeRPCServer.initialize();
+  await kubeRPCServer.initialize(); // Initialize service
 
   await kubeRPCServer.registerMethod({
+    // Register a method that clients can call.
     serviceName: SERVICE_NAME,
     method: {
       name: "test-method-01",
@@ -42,13 +42,14 @@ async function initRPCServer() {
   });
 
   // Unnecessary, initialize already does this
-  //  but this method can be used for updates to the service
+  //  but this method can be used to updates to the service
   await kubeRPCServer.updateService({
     serviceName: SERVICE_NAME,
     host: RPC_HOST,
     port: RPC_PORT,
   });
 
+  // Same as above, but for methods
   await kubeRPCServer.updateMethod({
     serviceName: SERVICE_NAME,
     methodName: "test-method-01",
@@ -56,7 +57,7 @@ async function initRPCServer() {
       name: "test-method-01-updated",
       params: ["param_one", "param_two"],
       description: "Testing RPC",
-      handler: testMethod,
+      handler: testMethodUpdated,
     },
   });
 }
